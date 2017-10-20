@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestHookOperator", "TestHookOperator\TestHookOperator.vcxproj", "{F6CEAFB8-1AAF-4DEE-B9C9-021FFB5B35B0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{FE2135F8-17DE-46A1-85CE-7B44BD6C637C} = {FE2135F8-17DE-46A1-85CE-7B44BD6C637C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HookOperator", "HookOperator\HookOperator.vcxproj", "{FE2135F8-17DE-46A1-85CE-7B44BD6C637C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F6CEAFB8-1AAF-4DEE-B9C9-021FFB5B35B0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F6CEAFB8-1AAF-4DEE-B9C9-021FFB5B35B0}.Debug|Win32.Build.0 = Debug|Win32
+		{F6CEAFB8-1AAF-4DEE-B9C9-021FFB5B35B0}.Release|Win32.ActiveCfg = Release|Win32
+		{F6CEAFB8-1AAF-4DEE-B9C9-021FFB5B35B0}.Release|Win32.Build.0 = Release|Win32
+		{FE2135F8-17DE-46A1-85CE-7B44BD6C637C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FE2135F8-17DE-46A1-85CE-7B44BD6C637C}.Debug|Win32.Build.0 = Debug|Win32
+		{FE2135F8-17DE-46A1-85CE-7B44BD6C637C}.Release|Win32.ActiveCfg = Release|Win32
+		{FE2135F8-17DE-46A1-85CE-7B44BD6C637C}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
