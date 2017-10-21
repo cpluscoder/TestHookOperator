@@ -21,13 +21,9 @@ public:
 		DWORD dwmsEventTime);
 
 protected:
-	// Initializes COM and sets up the event hook.
-	//
-	void InitializeMSAA(void);
+	void Initialize(void);
 
-	// Unhooks the event and shuts down COM.
-	//
-	void ShutdownMSAA(void);
+	void Shutdown(void);
 
 
 protected:

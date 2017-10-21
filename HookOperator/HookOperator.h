@@ -35,3 +35,23 @@ SetWinEventHook:½ØÈ¡EVENT_XXXÏûÏ¢, ÄÜ½ØÈ¡µ½ËùÓĞ½ø³ÌµÄÏûÏ¢, ²»ÄÜ½ØÈ¡¼üÊóÏûÏ¢, ½ø³
 	½ø³ÌÍâ¹³×Ó(WINEVENT_OUTOFCONTEXT):²»»á±»Ó³Éäµ½±ğµÄ½ø³Ì£¬²»ĞèÒªÔÚdllÖĞÊµÏÖ
 	¿ÉÒÔÎŞÊÓWIN7¼°ÒÔÉÏµÄUAC»úÖÆ, Ò²¾ÍÊÇËüÊÇ¸ø×Ô¶¯²âÊÔºÍ²ĞÕÏ¹¤¾ßÓÃµÄ£¬ËùÒÔËüÒª±£Ö¤ÓĞĞ§
 */
+
+#ifdef HOOK_OPERATOR_EXPORTS
+	#define HOOK_OPERATOR_API __declspec(dllexport)
+#else
+	#define HOOK_OPERATOR_API __declspec(dllimport)
+#endif
+
+#ifdef __cplusplus
+extern "C" 
+{
+#endif
+
+	HOOK_OPERATOR_API bool StartHook(void);
+
+	HOOK_OPERATOR_API void StopHook(void);
+
+#ifdef __cplusplus
+}
+#endif
+

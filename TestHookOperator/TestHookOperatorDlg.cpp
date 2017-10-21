@@ -7,8 +7,16 @@
 #include "TestHookOperatorDlg.h"
 #include "afxdialogex.h"
 
+#include "../HookOperator/HookOperator.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
+#endif
+
+#ifdef _DEBUG
+#pragma comment(lib, "HookOperator100d.lib")
+#else
+#pragma comment(lib, "HookOperator100.lib")
 #endif
 
 
@@ -63,6 +71,9 @@ BEGIN_MESSAGE_MAP(CTestHookOperatorDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BTN_START_HOOK, &CTestHookOperatorDlg::OnBnClickedBtnTest)
+	ON_BN_CLICKED(IDC_BTN_STOP_HOOK, &CTestHookOperatorDlg::OnBnClickedBtnStopHook)
+	ON_BN_CLICKED(IDC_BTN_MSGBOX, &CTestHookOperatorDlg::OnBnClickedBtnMsgbox)
 END_MESSAGE_MAP()
 
 
@@ -151,3 +162,28 @@ HCURSOR CTestHookOperatorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CTestHookOperatorDlg::OnBnClickedBtnTest()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	GetDlgItem(IDC_BTN_START_HOOK)->EnableWindow(FALSE);
+	StartHook();
+	GetDlgItem(IDC_BTN_STOP_HOOK)->EnableWindow(TRUE);
+}
+
+
+void CTestHookOperatorDlg::OnBnClickedBtnStopHook()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	GetDlgItem(IDC_BTN_START_HOOK)->EnableWindow(TRUE);
+	StopHook();
+	GetDlgItem(IDC_BTN_STOP_HOOK)->EnableWindow(FALSE);
+}
+
+
+void CTestHookOperatorDlg::OnBnClickedBtnMsgbox()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	AfxMessageBox("Test");
+}

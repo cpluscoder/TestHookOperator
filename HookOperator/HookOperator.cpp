@@ -4,6 +4,10 @@
 #include "stdafx.h"
 #include "HookOperator.h"
 
+#include "SetWndHookEx.h"
+#include "SetWinEvtHook.h"
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -61,3 +65,24 @@ BOOL CHookOperatorApp::InitInstance()
 
 	return TRUE;
 }
+
+CSetWinEvtHook *g_pSetWinEvtHook;
+
+void StopHook(void)
+{
+	if(g_pSetWinEvtHook != NULL)
+	{
+		delete g_pSetWinEvtHook;
+		g_pSetWinEvtHook = NULL;
+	}
+}
+
+bool StartHook(void)
+{
+	StopHook();
+
+	g_pSetWinEvtHook = new CSetWinEvtHook;
+
+	return true;
+}
+
