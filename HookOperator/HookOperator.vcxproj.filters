@@ -30,6 +30,12 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="SetWndHookEx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SetWinEvtHook.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HookOperator.h">
@@ -42,6 +48,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SetWndHookEx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SetWinEvtHook.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
