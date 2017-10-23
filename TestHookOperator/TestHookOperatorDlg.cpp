@@ -7,7 +7,6 @@
 #include "TestHookOperatorDlg.h"
 #include "afxdialogex.h"
 
-#include "../HookOperator/HookOperator.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -74,6 +73,13 @@ BEGIN_MESSAGE_MAP(CTestHookOperatorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_START_HOOK, &CTestHookOperatorDlg::OnBnClickedBtnTest)
 	ON_BN_CLICKED(IDC_BTN_STOP_HOOK, &CTestHookOperatorDlg::OnBnClickedBtnStopHook)
 	ON_BN_CLICKED(IDC_BTN_MSGBOX, &CTestHookOperatorDlg::OnBnClickedBtnMsgbox)
+	ON_COMMAND(ID_MENU_ITEM1, &CTestHookOperatorDlg::OnMenuItem1)
+	ON_COMMAND(ID_MENU_ITEM2, &CTestHookOperatorDlg::OnMenuItem2)
+	ON_COMMAND(ID_MENU_ITEM3, &CTestHookOperatorDlg::OnMenuItem3)
+	ON_COMMAND(ID_MENU_ITEM4, &CTestHookOperatorDlg::OnMenuItem4)
+	ON_COMMAND(ID_MENU_ITEM5, &CTestHookOperatorDlg::OnMenuItem5)
+	ON_COMMAND(ID_MENU_ITEM6, &CTestHookOperatorDlg::OnMenuItem6)
+	ON_COMMAND(ID_MENU_ITEM7, &CTestHookOperatorDlg::OnMenuItem7)
 END_MESSAGE_MAP()
 
 
@@ -109,6 +115,7 @@ BOOL CTestHookOperatorDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	InitializeHookData(GetSafeHwnd());
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -186,4 +193,64 @@ void CTestHookOperatorDlg::OnBnClickedBtnMsgbox()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	AfxMessageBox("Test");
+}
+
+void CTestHookOperatorDlg::OnClickMenu(UINT nMenuId, HookType emType)
+{
+	CMenu *pMenu = GetMenu()->GetSubMenu(0);
+	UINT nState = pMenu->GetMenuState(nMenuId, MF_BYCOMMAND);
+	bool bEnable = (nState & MF_CHECKED) != 0;
+	if(EnableHook(emType, !bEnable))
+	{
+		UINT nCheck = bEnable ? MF_UNCHECKED | MF_BYCOMMAND : MF_CHECKED | MF_BYCOMMAND;
+		pMenu->CheckMenuItem(nMenuId, nCheck);
+	}
+}
+
+void CTestHookOperatorDlg::OnMenuItem1()
+{
+	// TODO: 在此添加命令处理程序代码
+	OnClickMenu(ID_MENU_ITEM1, emCallWndProc);
+}
+
+
+void CTestHookOperatorDlg::OnMenuItem2()
+{
+	// TODO: 在此添加命令处理程序代码
+	OnClickMenu(ID_MENU_ITEM2, emCBT);
+}
+
+
+void CTestHookOperatorDlg::OnMenuItem3()
+{
+	// TODO: 在此添加命令处理程序代码
+	OnClickMenu(ID_MENU_ITEM3, emDebug);
+}
+
+
+void CTestHookOperatorDlg::OnMenuItem4()
+{
+	// TODO: 在此添加命令处理程序代码
+	OnClickMenu(ID_MENU_ITEM4, emGetMessage);
+}
+
+
+void CTestHookOperatorDlg::OnMenuItem5()
+{
+	// TODO: 在此添加命令处理程序代码
+	OnClickMenu(ID_MENU_ITEM5, emKeyboard);
+}
+
+
+void CTestHookOperatorDlg::OnMenuItem6()
+{
+	// TODO: 在此添加命令处理程序代码
+	OnClickMenu(ID_MENU_ITEM6, emMouse);
+}
+
+
+void CTestHookOperatorDlg::OnMenuItem7()
+{
+	// TODO: 在此添加命令处理程序代码
+	OnClickMenu(ID_MENU_ITEM7, emMsgFilter);
 }

@@ -4,10 +4,14 @@
 
 #pragma once
 
+#include "../HookOperator/HookOperator.h"
 
 // CTestHookOperatorDlg 对话框
 class CTestHookOperatorDlg : public CDialogEx
 {
+protected:
+	void OnClickMenu(UINT nMenuId, HookType emType);
+
 // 构造
 public:
 	CTestHookOperatorDlg(CWnd* pParent = NULL);	// 标准构造函数
@@ -33,4 +37,11 @@ public:
 	afx_msg void OnBnClickedBtnTest();
 	afx_msg void OnBnClickedBtnStopHook();
 	afx_msg void OnBnClickedBtnMsgbox();
+	afx_msg void OnMenuItem1();
+	afx_msg void OnMenuItem2();
+	afx_msg void OnMenuItem3();
+	afx_msg void OnMenuItem4();
+	afx_msg void OnMenuItem5();
+	afx_msg void OnMenuItem6();
+	afx_msg void OnMenuItem7();
 };

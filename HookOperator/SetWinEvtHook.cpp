@@ -1,13 +1,18 @@
 #include "StdAfx.h"
 #include "SetWinEvtHook.h"
 
-#define TEST_CASE_1	0
-#define TEST_CASE_2	1
+#include <string>
 
-#if	TEST_CASE_1
+#define WIN32_HANDLE_EVT	1
+#define ACC_HANDLE_EVT		0
+
+
+#if	ACC_HANDLE_EVT
 #include <OleAcc.h>
 #pragma comment (lib, "Oleacc.lib")
 #endif
+
+using namespace std;
 
 CSetWinEvtHook::CSetWinEvtHook(void)
 {
@@ -33,27 +38,60 @@ void CSetWinEvtHook::HandleWinEvent(
 	DWORD dwEventThread, 
 	DWORD dwmsEventTime)
 {
-#if TEST_CASE_1
-	IAccessible* pAcc = NULL;
-	VARIANT varChild;
-	HRESULT hr = ::AccessibleObjectFromEvent(hWnd, idObject, idChild, &pAcc, &varChild);
-	if((hr == S_OK) && (pAcc != NULL))
+#if ACC_HANDLE_EVT
+	try
 	{
-		BSTR bstrName;
-		pAcc->get_accName(varChild, &bstrName);
-		if(dwEvent == EVENT_SYSTEM_MENUSTART)
+		IAccessible* pAcc = NULL;
+		VARIANT varChild;
+		HRESULT hr = ::AccessibleObjectFromEvent(hWnd, idObject, idChild, &pAcc, &varChild);
+		if(hr == S_OK && pAcc != NULL)
 		{
-			TRACE("Begin: ");
+			BSTR bstrName;
+			pAcc->get_accName(varChild, &bstrName);
+			BSTR bstrValue;
+			pAcc->get_accValue(varChild, &bstrValue);
+			BSTR bstrDesc;
+			pAcc->get_accDescription(varChild, &bstrDesc);
+			CString strMsg;
+			if(dwEvent == EVENT_OBJECT_SHOW/*EVENT_SYSTEM_MENUSTART*/)
+			{
+				strMsg.Format("Show -- Name:[%S] Value:[%S] Desc:[%S]\n", bstrName, bstrValue, bstrDesc);
+				OutputDebugString(strMsg);
+			}
+			else if(dwEvent == EVENT_OBJECT_HIDE/*EVENT_SYSTEM_MENUEND*/)
+			{
+				strMsg.Format("HIDE -- Name:[%S] Value:[%S] Desc:[%S]\n", bstrName, bstrValue, bstrDesc);
+				OutputDebugString(strMsg);
+			}
+			
+			SysFreeString(bstrName);
+			SysFreeString(bstrValue);
+			SysFreeString(bstrDesc);
+			pAcc->Release();
 		}
-		else if(dwEvent == EVENT_SYSTEM_MENUEND)
-		{
-			TRACE("End:   ");
-		}
-		TRACE("%S\n", bstrName);
-		SysFreeString(bstrName);
-		pAcc->Release();
 	}
-#elif TEST_CASE_2
+	catch (CMemoryException* e)
+	{
+		char szError[256];
+		ZeroMemory(szError, sizeof(szError));
+		e->GetErrorMessage(szError, sizeof(szError));
+		OutputDebugString(szError);
+	}
+	catch (CFileException* e)
+	{
+		char szError[256];
+		ZeroMemory(szError, sizeof(szError));
+		e->GetErrorMessage(szError, sizeof(szError));
+		OutputDebugString(szError);
+	}
+	catch (CException* e)
+	{
+		char szError[256];
+		ZeroMemory(szError, sizeof(szError));
+		e->GetErrorMessage(szError, sizeof(szError));
+		OutputDebugString(szError);
+	}
+#elif WIN32_HANDLE_EVT
 	switch(dwEvent)
 	{
 	case EVENT_SYSTEM_SWITCHSTART:
@@ -79,9 +117,17 @@ void CSetWinEvtHook::HandleWinEvent(
 			//HWND hOwner = ::GetWindow(hWnd, GW_OWNER);
 			//HWND hParent = ::GetParent(hWnd);
 
-			str.Format(TEXT("[%d] [%s] [%s] obj:[%x] id:[%d] SHOW\n"), dwEventThread, szName, className, idObject, idChild);
+			str.Format(TEXT("Thread:[%d] Caption:[%s] ClassName[%s] Obj:[%x] Child:[%d] SHOW\n"), dwEventThread, szName, className, idObject, idChild);
 			OutputDebugString(str);
 			//CWindowEventDispatcher::instance()->CheckAndNotify(hWnd);
+
+			string strCaption = "ÌבÊ¾";
+			string strClassName = "TCustomBaseFormDlg";
+			if(strCaption == szName && strClassName == className)
+			{
+				OutputDebugString("PostMessage close");
+				::PostMessage(hWnd, WM_CLOSE, NULL, NULL);
+			}
 		}
 		break;
 	case EVENT_OBJECT_HIDE:
@@ -93,7 +139,7 @@ void CSetWinEvtHook::HandleWinEvent(
 			TCHAR className[MAX_PATH] = { 0 };
 			::RealGetWindowClass(hWnd, className, MAX_PATH);
 
-			str.Format(TEXT("[%d] [%s] [%s] obj:[%x] id:[%d] HIDE"), dwEventThread, szName, className, idObject, idChild);
+			str.Format(TEXT("Thread:[%d] Caption:[%s] ClassName[%s] Obj:[%x] Child:[%d] HIDE\n"), dwEventThread, szName, className, idObject, idChild);
 			OutputDebugString(str);
 		}
 		break;
@@ -109,10 +155,10 @@ void CSetWinEvtHook::HandleWinEvent(
 void CSetWinEvtHook::Initialize()
 {
 	m_hook = ::SetWinEventHook(
-#if TEST_CASE_1
-		EVENT_SYSTEM_MENUSTART, EVENT_SYSTEM_MENUEND,  // Range of events (4 to 5).
-#elif TEST_CASE_2
-		EVENT_OBJECT_SHOW, EVENT_OBJECT_HIDE,  //EVENT_MIN, EVENT_MAX,
+#if ACC_HANDLE_EVT
+		EVENT_OBJECT_SHOW, EVENT_OBJECT_HIDE,	//EVENT_SYSTEM_MENUSTART, EVENT_SYSTEM_MENUEND,  // Range of events (4 to 5).
+#elif WIN32_HANDLE_EVT
+		EVENT_OBJECT_SHOW, EVENT_OBJECT_HIDE,	//EVENT_MIN, EVENT_MAX,
 #endif
 		NULL,                                          // Handle to DLL.
 		HandleWinEvent,                                // The callback.

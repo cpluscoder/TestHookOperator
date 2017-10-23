@@ -42,14 +42,32 @@ SetWinEventHook:½ØÈ¡EVENT_XXXÏûÏ¢, ÄÜ½ØÈ¡µ½ËùÓĞ½ø³ÌµÄÏûÏ¢, ²»ÄÜ½ØÈ¡¼üÊóÏûÏ¢, ½ø³
 	#define HOOK_OPERATOR_API __declspec(dllimport)
 #endif
 
+typedef enum _HookType
+{
+	emCallWndProc = 0,
+	emCBT,
+	emDebug,
+	emGetMessage,
+	emKeyboard,
+	emMouse,
+	emMsgFilter,
+
+	HookTypeCount
+}HookType;
+
+
 #ifdef __cplusplus
 extern "C" 
 {
 #endif
 
+///	SetWinEventHook
 	HOOK_OPERATOR_API bool StartHook(void);
-
 	HOOK_OPERATOR_API void StopHook(void);
+
+///	SetWindowsHookEx
+	HOOK_OPERATOR_API void InitializeHookData(HWND hMainWnd);
+	HOOK_OPERATOR_API bool EnableHook(HookType emType, bool bEnable = true);
 
 #ifdef __cplusplus
 }
