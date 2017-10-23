@@ -14,17 +14,17 @@
 // 有关此类实现的信息，请参阅 HookOperator.cpp
 //
 
-class CHookOperatorApp : public CWinApp
-{
-public:
-	CHookOperatorApp();
-
-// 重写
-public:
-	virtual BOOL InitInstance();
-
-	DECLARE_MESSAGE_MAP()
-};
+//class CHookOperatorApp : public CWinApp
+//{
+//public:
+//	CHookOperatorApp();
+//
+//// 重写
+//public:
+//	virtual BOOL InitInstance();
+//
+//	DECLARE_MESSAGE_MAP()
+//};
 
 /**
 SetWindowsHookEx:截取WM_XXX消息

@@ -148,7 +148,6 @@ LRESULT WINAPI CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 
 	CHAR szCWPBuf[256];
 	CHAR szMsg[MSG_LENGTH_LEN];
-	HDC hdc;
 	static int c = 0;
 	size_t cch;
 	HRESULT hResult;
@@ -160,7 +159,7 @@ LRESULT WINAPI CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 	{
 	case HC_ACTION:
 		{
-			hResult = StringCchPrintf(szCWPBuf, 256/sizeof(TCHAR), "CALLWNDPROC - tsk: %ld, msg: %s, %d times   ", wParam, szMsg, c++);
+			hResult = StringCchPrintf(szCWPBuf, 256/sizeof(TCHAR), "CALLWNDPROC - tsk: %ld, msg: %s, %d times\n", wParam, szMsg, c++);
 			if (FAILED(hResult))
 			{
 				// TODO: writer error handler
@@ -170,19 +169,15 @@ LRESULT WINAPI CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 			{
 				// TODO: write error handler
 			}
-			hdc = GetDC(g_hMainWnd);
-			RECT rc;
-			GetClientRect(g_hMainWnd, &rc);
-			rc.bottom -= 200;
-			InvalidateRect(g_hMainWnd, &rc, TRUE);
+			OutputDebugString(szCWPBuf);
+			HDC hdc = GetDC(g_hMainWnd);
 			TextOut(hdc, 2, 15, szCWPBuf, cch);
+			ReleaseDC(g_hMainWnd, hdc);
 		}
 		break;
 	default:
 		break;
 	}
-
-	ReleaseDC(g_hMainWnd, hdc);
 
 	return CallNextHookEx(g_arrHookData[emCallWndProc].hHook, nCode, wParam, lParam);
 }
@@ -195,7 +190,6 @@ LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	CHAR szBuf[128];
 	CHAR szCode[128];
-	HDC hdc;
 	static int c = 0;
 	size_t cch;
 	HRESULT hResult;
@@ -205,8 +199,6 @@ LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 	{
 		return CallNextHookEx(g_arrHookData[emCBT].hHook, nCode, wParam, lParam);
 	}
-
-	hdc = GetDC(g_hMainWnd);
 
 	switch (nCode)
 	{
@@ -298,7 +290,7 @@ LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	}
-	hResult = StringCchPrintf(szBuf, 128/sizeof(TCHAR), "CBT -  nCode: %s, tsk: %ld, %d times   ", szCode, wParam, c++);
+	hResult = StringCchPrintf(szBuf, 128/sizeof(TCHAR), "CBT -  nCode: %s, tsk: %ld, %d times\n", szCode, wParam, c++);
 	if (FAILED(hResult))
 	{
 		// TODO: write error handler
@@ -308,7 +300,9 @@ LRESULT CALLBACK CBTProc(int nCode, WPARAM wParam, LPARAM lParam)
 	{
 		// TODO: write error handler
 	}
-	TextOut(hdc, 2, 75, szBuf, cch);
+	OutputDebugString(szBuf);
+	HDC hdc = GetDC(g_hMainWnd);
+	TextOut(hdc, 2, 40, szBuf, cch);
 	ReleaseDC(g_hMainWnd, hdc);
 
 	return CallNextHookEx(g_arrHookData[emCBT].hHook, nCode, wParam, lParam);
@@ -321,7 +315,6 @@ WH_DEBUG hook procedure
 LRESULT CALLBACK DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	CHAR szBuf[128];
-	HDC hdc;
 	static int c = 0;
 	size_t cch;
 	HRESULT hResult;
@@ -332,29 +325,29 @@ LRESULT CALLBACK DebugProc(int nCode, WPARAM wParam, LPARAM lParam)
 		return CallNextHookEx(g_arrHookData[emDebug].hHook, nCode, wParam, lParam);
 	}
 
-	hdc = GetDC(g_hMainWnd);
-
 	switch (nCode)
 	{
 	case HC_ACTION:
-		hResult = StringCchPrintf(szBuf, 128/sizeof(TCHAR), "DEBUG - nCode: %d, tsk: %ld, %d times   ", nCode,wParam, c++);
-		if (FAILED(hResult))
 		{
-			// TODO: write error handler
+			hResult = StringCchPrintf(szBuf, 128/sizeof(TCHAR), "DEBUG - nCode: %d, tsk: %ld, %d times\n", nCode,wParam, c++);
+			if (FAILED(hResult))
+			{
+				// TODO: write error handler
+			}
+			hResult = StringCchLength(szBuf, 128/sizeof(TCHAR), &cch);
+			if (FAILED(hResult))
+			{
+				// TODO: write error handler
+			}
+			OutputDebugString(szBuf);
+			HDC hdc = GetDC(g_hMainWnd);
+			TextOut(hdc, 2, 65, szBuf, cch);
+			ReleaseDC(g_hMainWnd, hdc);
 		}
-		hResult = StringCchLength(szBuf, 128/sizeof(TCHAR), &cch);
-		if (FAILED(hResult))
-		{
-			// TODO: write error handler
-		}
-		TextOut(hdc, 2, 55, szBuf, cch);
 		break;
-
 	default:
 		break;
 	}
-
-	ReleaseDC(g_hMainWnd, hdc);
 
 	return CallNextHookEx(g_arrHookData[emDebug].hHook, nCode, wParam, lParam);
 }
@@ -367,7 +360,6 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 	CHAR szMSGBuf[256];
 	CHAR szRem[16];
 	CHAR szMsg[MSG_LENGTH_LEN];
-	HDC hdc;
 	static int c = 0;
 	size_t cch;
 	HRESULT hResult;
@@ -381,55 +373,56 @@ LRESULT CALLBACK GetMsgProc(int nCode, WPARAM wParam, LPARAM lParam)
 	switch (nCode)
 	{
 	case HC_ACTION:
-		switch (wParam)
 		{
-		case PM_REMOVE:
-			hResult = StringCchCopy(szRem, 16/sizeof(TCHAR), "PM_REMOVE");
+			switch (wParam)
+			{
+			case PM_REMOVE:
+				hResult = StringCchCopy(szRem, 16/sizeof(TCHAR), "PM_REMOVE");
+				if (FAILED(hResult))
+				{
+					// TODO: write error handler
+				}
+				break;
+
+			case PM_NOREMOVE:
+				hResult = StringCchCopy(szRem, 16/sizeof(TCHAR), "PM_NOREMOVE");
+				if (FAILED(hResult))
+				{
+					// TODO: write error handler
+				}
+				break;
+
+			default:
+				hResult = StringCchCopy(szRem, 16/sizeof(TCHAR), "Unknown");
+				if (FAILED(hResult))
+				{
+					// TODO: write error handler
+				}
+				break;
+			}
+
+			// Call an application-defined function that converts a message constant to a string and copies it to a buffer.
+			LookUpTheMessage((PMSG) lParam, szMsg);
+			
+			hResult = StringCchPrintf(szMSGBuf, 256/sizeof(TCHAR), "GETMESSAGE - wParam: %s, msg: %s, %d times\n", szRem, szMsg, c++);
 			if (FAILED(hResult))
 			{
 				// TODO: write error handler
 			}
-			break;
-
-		case PM_NOREMOVE:
-			hResult = StringCchCopy(szRem, 16/sizeof(TCHAR), "PM_NOREMOVE");
+			hResult = StringCchLength(szMSGBuf, 256/sizeof(TCHAR), &cch);
 			if (FAILED(hResult))
 			{
 				// TODO: write error handler
 			}
-			break;
-
-		default:
-			hResult = StringCchCopy(szRem, 16/sizeof(TCHAR), "Unknown");
-			if (FAILED(hResult))
-			{
-				// TODO: write error handler
-			}
-			break;
+			OutputDebugString(szMSGBuf);
+			HDC hdc = GetDC(g_hMainWnd);
+			TextOut(hdc, 2, 90, szMSGBuf, cch);
+			ReleaseDC(g_hMainWnd, hdc);
 		}
-
-		// Call an application-defined function that converts a message constant to a string and copies it to a buffer.
-		LookUpTheMessage((PMSG) lParam, szMsg);
-
-		hdc = GetDC(g_hMainWnd);
-		hResult = StringCchPrintf(szMSGBuf, 256/sizeof(TCHAR), "GETMESSAGE - wParam: %s, msg: %s, %d times   ", szRem, szMsg, c++);
-		if (FAILED(hResult))
-		{
-			// TODO: write error handler
-		}
-		hResult = StringCchLength(szMSGBuf, 256/sizeof(TCHAR), &cch);
-		if (FAILED(hResult))
-		{
-			// TODO: write error handler
-		}
-		TextOut(hdc, 2, 35, szMSGBuf, cch);
 		break;
-
 	default:
 		break;
 	}
-
-	ReleaseDC(g_hMainWnd, hdc);
 
 	return CallNextHookEx(g_arrHookData[emGetMessage].hHook, nCode, wParam, lParam);
 }
@@ -441,7 +434,6 @@ WH_KEYBOARD hook procedure
 LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	CHAR szBuf[128];
-	HDC hdc;
 	static int c = 0;
 	size_t cch;
 	HRESULT hResult;
@@ -452,8 +444,7 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 		return CallNextHookEx(g_arrHookData[emKeyboard].hHook, nCode, wParam, lParam);
 	}
 
-	hdc = GetDC(g_hMainWnd);
-	hResult = StringCchPrintf(szBuf, 128/sizeof(TCHAR), "KEYBOARD - nCode: %d, vk: %d, %d times ", nCode, wParam, c++);
+	hResult = StringCchPrintf(szBuf, 128/sizeof(TCHAR), "KEYBOARD - nCode: %d, vk: %d, %d times\n", nCode, wParam, c++);
 	if (FAILED(hResult))
 	{
 		// TODO: write error handler
@@ -463,6 +454,8 @@ LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 	{
 		// TODO: write error handler
 	}
+	OutputDebugString(szBuf);
+	HDC hdc = GetDC(g_hMainWnd);
 	TextOut(hdc, 2, 115, szBuf, cch);
 	ReleaseDC(g_hMainWnd, hdc);
 
@@ -477,7 +470,6 @@ LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	CHAR szBuf[128];
 	CHAR szMsg[MSG_LENGTH_LEN];
-	HDC hdc;
 	static int c = 0;
 	size_t cch;
 	HRESULT hResult;
@@ -491,8 +483,7 @@ LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 	// Call an application-defined function that converts a message constant to a string and copies it to a buffer.
 	LookUpTheMessage((PMSG) lParam, szMsg);
 
-	hdc = GetDC(g_hMainWnd);
-	hResult = StringCchPrintf(szBuf, 128/sizeof(TCHAR), "MOUSE - nCode: %d, msg: %s, x: %d, y: %d, %d times   ", nCode, szMsg, LOWORD(lParam), HIWORD(lParam), c++);
+	hResult = StringCchPrintf(szBuf, 128/sizeof(TCHAR), "MOUSE - nCode: %d, msg: %s, x: %d, y: %d, %d times\n", nCode, szMsg, LOWORD(lParam), HIWORD(lParam), c++);
 	if (FAILED(hResult))
 	{
 		// TODO: write error handler
@@ -502,7 +493,9 @@ LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 	{
 		// TODO: write error handler
 	}
-	TextOut(hdc, 2, 95, szBuf, cch);
+	OutputDebugString(szBuf);
+	HDC hdc = GetDC(g_hMainWnd);
+	TextOut(hdc, 2, 140, szBuf, cch);
 	ReleaseDC(g_hMainWnd, hdc);
 
 	return CallNextHookEx(g_arrHookData[emMouse].hHook, nCode, wParam, lParam);
@@ -516,7 +509,6 @@ LRESULT CALLBACK MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
 	CHAR szBuf[128];
 	CHAR szMsg[MSG_LENGTH_LEN];
 	CHAR szCode[32];
-	HDC hdc;
 	static int c = 0;
 	size_t cch;
 	HRESULT hResult;
@@ -565,8 +557,7 @@ LRESULT CALLBACK MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
 	// Call an application-defined function that converts a message constant to a string and copies it to a buffer.
 	LookUpTheMessage((PMSG) lParam, szMsg);
 
-	hdc = GetDC(g_hMainWnd);
-	hResult = StringCchPrintf(szBuf, 128/sizeof(TCHAR), "MSGFILTER  nCode: %s, msg: %s, %d times    ", szCode, szMsg, c++);
+	hResult = StringCchPrintf(szBuf, 128/sizeof(TCHAR), "MSGFILTER  nCode: %s, msg: %s, %d times\n", szCode, szMsg, c++);
 	if (FAILED(hResult))
 	{
 		// TODO: write error handler
@@ -576,7 +567,9 @@ LRESULT CALLBACK MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
 	{
 		// TODO: write error handler
 	}
-	TextOut(hdc, 2, 135, szBuf, cch);
+	OutputDebugString(szBuf);
+	HDC hdc = GetDC(g_hMainWnd);
+	TextOut(hdc, 2, 165, szBuf, cch);
 	ReleaseDC(g_hMainWnd, hdc);
 
 	return CallNextHookEx(g_arrHookData[emMsgFilter].hHook, nCode, wParam, lParam);
@@ -669,7 +662,7 @@ bool EnableHook(HookType emType, bool bEnable)
 		{
 			g_arrHookData[nIndex].hHook = ::SetWindowsHookEx(g_arrHookData[nIndex].nType, g_arrHookData[nIndex].hkprc, (HINSTANCE) NULL, GetCurrentThreadId());
 			afHooks[nIndex] = TRUE;
-			strMsg.Append(" Enable");
+			strMsg.Append(" Enable\n");
 			OutputDebugString(strMsg);
 			return true;
 		}
@@ -681,7 +674,7 @@ bool EnableHook(HookType emType, bool bEnable)
 		{
 			::UnhookWindowsHookEx(g_arrHookData[nIndex].hHook);
 			afHooks[nIndex] = FALSE;
-			strMsg.Append(" Disable");
+			strMsg.Append(" Disable\n");
 			OutputDebugString(strMsg);
 			return true;
 		}

@@ -38,7 +38,7 @@
 //
 
 // CHookOperatorApp
-
+/*
 BEGIN_MESSAGE_MAP(CHookOperatorApp, CWinApp)
 END_MESSAGE_MAP()
 
@@ -65,24 +65,4 @@ BOOL CHookOperatorApp::InitInstance()
 
 	return TRUE;
 }
-
-CSetWinEvtHook *g_pSetWinEvtHook;
-
-void StopHook(void)
-{
-	if(g_pSetWinEvtHook != NULL)
-	{
-		delete g_pSetWinEvtHook;
-		g_pSetWinEvtHook = NULL;
-	}
-}
-
-bool StartHook(void)
-{
-	StopHook();
-
-	g_pSetWinEvtHook = new CSetWinEvtHook;
-
-	return true;
-}
-
+*/

@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "SetWinEvtHook.h"
+#include "HookOperator.h"
 
 #include <string>
 
@@ -174,3 +175,25 @@ void CSetWinEvtHook::Shutdown(void)
 		m_hook = NULL;
 	}
 }
+
+
+CSetWinEvtHook *g_pSetWinEvtHook;
+
+void StopHook(void)
+{
+	if(g_pSetWinEvtHook != NULL)
+	{
+		delete g_pSetWinEvtHook;
+		g_pSetWinEvtHook = NULL;
+	}
+}
+
+bool StartHook(void)
+{
+	StopHook();
+
+	g_pSetWinEvtHook = new CSetWinEvtHook;
+
+	return true;
+}
+
